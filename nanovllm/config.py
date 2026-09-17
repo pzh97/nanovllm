@@ -2,7 +2,6 @@ import os
 from dataclasses import dataclass
 from transformers import AutoConfig
 
-
 @dataclass(slots=True)
 class Config:
     model: str
