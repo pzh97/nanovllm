@@ -11,6 +11,15 @@ def apply_chat_template(request: ChatCompletionRequest) -> str:
     prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     return prompt
 
+def decode_output(token_ids: list[int]) -> str:
+    return tokenizer.decode(
+        token_ids,
+        skip_special_tokens=True,
+    )
+
+def count_tokens(text: str) -> int:
+    return len(tokenizer.encode(text))
+
 if __name__ == "__main__":
     request = ChatCompletionRequest(
             model="Qwen/Qwen2.5-7B-Instruct",

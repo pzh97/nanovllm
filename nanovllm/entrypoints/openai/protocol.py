@@ -8,6 +8,9 @@ class ChatMessage(BaseModel):
 class ChatCompletionRequest(BaseModel):
     model: str
     messages: list[ChatMessage]
+
+    temperature: float = 1.0
+    max_tokens: int = 256
     stream: bool = False 
 
 if __name__ == "__main__":

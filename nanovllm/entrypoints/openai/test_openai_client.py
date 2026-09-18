@@ -6,14 +6,22 @@ client = OpenAI(
 )
 
 response = client.chat.completions.create(
-    model="Qwen2.5-7B-Instruct",
+    model="Qwen3-0.6B",
     messages=[
         {
             "role": "user",
-            "content": "Hello from test client!"
+            "content": "explain what a transformer is in three sentences."
         }
     ],
+    max_tokens=3,
+    stream=False,
 )
 
-print(response.choices[0].message.content)
+print("content =", repr(response.choices[0].message.content))
+print("finish =", response.choices[0].finish_reason)
 
+# for chunk in stream:
+#     print(
+#         "content =", repr(chunk.choices[0].delta.content),
+#         "finish =", chunk.choices[0].finish_reason,
+#     )
