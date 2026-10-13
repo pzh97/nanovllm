@@ -23,7 +23,15 @@ def main():
     enforce_eager = "--cuda-graph" not in sys.argv
     tokenizer = AutoTokenizer.from_pretrained(path)
     t = time.perf_counter()
-    llm = LLM(path, enforce_eager=enforce_eager, max_model_len=2048, max_num_batched_tokens=4096)
+    # Small limits: on Windows, exceeding VRAM silently spills to system RAM and stalls.
+    llm = LLM(
+        path,
+        enforce_eager=enforce_eager,
+        max_model_len=2048,
+        max_num_batched_tokens=4096,
+        max_num_seqs=16,
+        gpu_memory_utilization=0.8,
+    )
     print(f"engine ready in {time.perf_counter() - t:.1f}s")
 
     prompts = [

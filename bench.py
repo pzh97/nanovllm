@@ -13,6 +13,8 @@ def main():
     parser.add_argument("--max-input-len", type=int, default=1024)
     parser.add_argument("--max-output-len", type=int, default=1024)
     parser.add_argument("--max-model-len", type=int, default=4096)
+    parser.add_argument("--max-num-seqs", type=int, default=512)
+    parser.add_argument("--gpu-memory-utilization", type=float, default=0.9)
     parser.add_argument("--enforce-eager", action="store_true")
     args = parser.parse_args()
 
@@ -22,7 +24,13 @@ def main():
     max_ouput_len = args.max_output_len
 
     path = os.path.expanduser(args.model)
-    llm = LLM(path, enforce_eager=args.enforce_eager, max_model_len=args.max_model_len)
+    llm = LLM(
+        path,
+        enforce_eager=args.enforce_eager,
+        max_model_len=args.max_model_len,
+        max_num_seqs=args.max_num_seqs,
+        gpu_memory_utilization=args.gpu_memory_utilization,
+    )
 
     prompt_token_ids = [[randint(0, 10000) for _ in range(randint(100, max_input_len))] for _ in range(num_seqs)]
     sampling_params = [SamplingParams(temperature=0.6, ignore_eos=True, max_tokens=randint(100, max_ouput_len)) for _ in range(num_seqs)]
