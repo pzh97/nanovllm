@@ -35,10 +35,12 @@ AWQ_REVERSE_ORDER = [0, 4, 1, 5, 2, 6, 3, 7]
 
 def awq_unpack(packed: torch.Tensor) -> torch.Tensor:
     """Unpack [R, C/8] int32 into [R, C] int32 values in 0..15, natural column order."""
-    shifts = torch.arange(0, 32, 4, device=packed.device)
+    # Column j lives in nibble AWQ_REVERSE_ORDER[j], i.e. at bit shift
+    # [0, 16, 4, 20, 8, 24, 12, 28][j] -- arange(0, 32, 4) viewed as 2x4 and transposed.
+    # Building it with arange (no host list) keeps this CUDA-graph capturable.
+    shifts = torch.arange(0, 32, 4, device=packed.device).view(2, 4).T.reshape(-1)
     # Arithmetic right shift may drag in sign bits for negative int32s; & 0xF drops them.
-    x = (packed.unsqueeze(-1) >> shifts) & 0xF  # [R, C/8, 8] in nibble order
-    x = x[..., AWQ_REVERSE_ORDER]  # back to column order
+    x = (packed.unsqueeze(-1) >> shifts) & 0xF  # [R, C/8, 8] in column order
     return x.reshape(packed.shape[0], -1)
 
 
