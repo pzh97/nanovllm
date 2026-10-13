@@ -2,6 +2,8 @@ import os
 from dataclasses import dataclass
 from transformers import AutoConfig
 
+from nanovllm.layers.quantization.awq import AWQConfig
+
 @dataclass(slots=True)
 class Config:
     model: str
@@ -15,6 +17,7 @@ class Config:
     eos: int = -1
     kvcache_block_size: int = 256
     num_kvcache_blocks: int = -1
+    quant_config: AWQConfig | None = None
 
     def __post_init__(self):
         assert os.path.isdir(self.model)
@@ -22,3 +25,4 @@ class Config:
         assert 1 <= self.tensor_parallel_size <= 8
         self.hf_config = AutoConfig.from_pretrained(self.model)
         self.max_model_len = min(self.max_model_len, self.hf_config.max_position_embeddings)
+        self.quant_config = AWQConfig.from_hf(getattr(self.hf_config, "quantization_config", None))
