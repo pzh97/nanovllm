@@ -112,7 +112,7 @@ AWQ has lower per-token latency while decode is memory-bound (TPOT 4.0 vs 4.3 ms
 | 32 | **762** | 3569 | 23.8 |
 | 64 | 713 | 10708 | 40.1 |
 
-Throughput peaks at C=32. At C=64 the requests need more KV cache than the ~4 GiB left after weights, so the scheduler preempts and TTFT jumps. This is the memory wall of a 12 GB card. TTFT grows with C partly because the closed loop with fixed output lengths makes requests arrive in synchronized waves, so each wave's prefill is batched together.
+Throughput peaks at C=32. With weights, activations and CUDA graphs resident, 0.85 utilization leaves 94 KV blocks (24k tokens, ~1.3 GiB). Each 768-token request needs 3 blocks, so only ~31 sequences fit at once. At C=64 half the users wait in the queue and TTFT jumps. This is the memory wall of a 12 GB card. TTFT grows with C partly because the closed loop with fixed output lengths makes requests arrive in synchronized waves, so each wave's prefill is batched together.
 
 Raw results live in [results/](results/).
 
