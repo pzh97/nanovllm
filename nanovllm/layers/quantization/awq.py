@@ -32,6 +32,9 @@ class AWQConfig:
 # The inverse permutation below tells which nibble holds column j.
 AWQ_REVERSE_ORDER = [0, 4, 1, 5, 2, 6, 3, 7]
 
+# Above this many tokens, dequantize + cuBLAS is faster than the fused kernel (same cutoff as vLLM).
+AWQ_FUSED_MAX_TOKENS = 256
+
 
 def awq_unpack(packed: torch.Tensor) -> torch.Tensor:
     """Unpack [R, C/8] int32 into [R, C] int32 values in 0..15, natural column order."""
@@ -74,8 +77,20 @@ def awq_linear(
 ) -> torch.Tensor:
     """y = x @ W.T + b with an AWQ weight.
 
-    Reference path: materialize the full weight in x.dtype, then call F.linear.
-    Correct but memory-bound; a fused kernel replaces this later.
+    CUDA, few tokens (decode): fused Triton dequant + GEMM, weight never materialized.
+    CUDA, many tokens (prefill): Triton dequant to [in, out], then cuBLAS -- the
+      dequant cost is amortized over many rows and cuBLAS beats our GEMM there.
+    CPU: pure PyTorch reference.
     """
-    w = awq_dequantize(qweight, qzeros, scales, group_size, x.dtype)
-    return F.linear(x, w, bias)
+    if not x.is_cuda:
+        return F.linear(x, awq_dequantize(qweight, qzeros, scales, group_size, x.dtype), bias)
+    from nanovllm.layers.quantization.awq_triton import awq_gemm_triton, awq_dequantize_triton
+    shape = x.shape
+    x = x.reshape(-1, shape[-1]).contiguous()
+    if x.size(0) <= AWQ_FUSED_MAX_TOKENS:
+        y = awq_gemm_triton(x, qweight, qzeros, scales, group_size)
+    else:
+        y = x @ awq_dequantize_triton(qweight, qzeros, scales, group_size, x.dtype)
+    if bias is not None:
+        y += bias
+    return y.reshape(*shape[:-1], -1)
