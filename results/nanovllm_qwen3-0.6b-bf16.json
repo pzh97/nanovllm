@@ -1,0 +1,109 @@
+{
+  "meta": {
+    "backend": "nanovllm",
+    "model": "C:/Users/pzh19/huggingface/Qwen3-0.6B-official",
+    "concurrency": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64
+    ],
+    "requests_per_user": 4,
+    "min_requests": 16,
+    "input_len": 512,
+    "output_len": 256,
+    "max_num_seqs": 64,
+    "gpu_memory_utilization": 0.85,
+    "enforce_eager": false,
+    "label": "nano-vllm Qwen3-0.6B bf16"
+  },
+  "results": [
+    {
+      "concurrency": 1,
+      "num_requests": 16,
+      "wall_s": 18.32830679998733,
+      "output_throughput": 223.4794541961089,
+      "total_throughput": 670.4383625883266,
+      "ttft_ms_mean": 58.35448124707909,
+      "ttft_ms_p50": 47.64869995415211,
+      "ttft_ms_p99": 217.77950000250712,
+      "tpot_ms_mean": 4.263288112740744,
+      "tpot_ms_p99": 4.372135686058113
+    },
+    {
+      "concurrency": 2,
+      "num_requests": 16,
+      "wall_s": 9.911248299991712,
+      "output_throughput": 413.2678221776994,
+      "total_throughput": 1239.8034665330981,
+      "ttft_ms_mean": 47.696675017505186,
+      "ttft_ms_p50": 45.08100001839921,
+      "ttft_ms_p99": 63.7276999768801,
+      "tpot_ms_mean": 4.6713078430484,
+      "tpot_ms_p99": 4.738277647023399
+    },
+    {
+      "concurrency": 4,
+      "num_requests": 16,
+      "wall_s": 5.283715099969413,
+      "output_throughput": 775.2121230048364,
+      "total_throughput": 2325.636369014509,
+      "ttft_ms_mean": 48.1737812551728,
+      "ttft_ms_p50": 47.32680000597611,
+      "ttft_ms_p99": 52.871800027787685,
+      "tpot_ms_mean": 4.9910649019247835,
+      "tpot_ms_p99": 5.038737646970605
+    },
+    {
+      "concurrency": 8,
+      "num_requests": 32,
+      "wall_s": 6.228313300001901,
+      "output_throughput": 1315.2838666605774,
+      "total_throughput": 3945.851599981732,
+      "ttft_ms_mean": 83.8562031112815,
+      "ttft_ms_p50": 83.47519999369979,
+      "ttft_ms_p99": 85.43899998767301,
+      "tpot_ms_mean": 5.777136960886327,
+      "tpot_ms_p99": 5.895497255009033
+    },
+    {
+      "concurrency": 16,
+      "num_requests": 64,
+      "wall_s": 7.927677100000437,
+      "output_throughput": 2066.683568633124,
+      "total_throughput": 6200.050705899373,
+      "ttft_ms_mean": 168.89621562677348,
+      "ttft_ms_p50": 169.3101999699138,
+      "ttft_ms_p99": 171.03300004964694,
+      "tpot_ms_mean": 7.1095870588632195,
+      "tpot_ms_p99": 7.1793815684870035
+    },
+    {
+      "concurrency": 32,
+      "num_requests": 128,
+      "wall_s": 12.123709399951622,
+      "output_throughput": 2702.803153639657,
+      "total_throughput": 8108.4094609189715,
+      "ttft_ms_mean": 334.07304688216755,
+      "ttft_ms_p50": 334.80599999893457,
+      "ttft_ms_p99": 335.836999991443,
+      "tpot_ms_mean": 10.575382745032673,
+      "tpot_ms_p99": 10.643952156818818
+    },
+    {
+      "concurrency": 64,
+      "num_requests": 256,
+      "wall_s": 18.82775210001273,
+      "output_throughput": 3480.8191467506995,
+      "total_throughput": 10442.457440252098,
+      "ttft_ms_mean": 499.38387695783604,
+      "ttft_ms_p50": 664.1954000224359,
+      "ttft_ms_p99": 667.0250000315718,
+      "tpot_ms_mean": 16.499222745130513,
+      "tpot_ms_p99": 17.20408980401379
+    }
+  ]
+}

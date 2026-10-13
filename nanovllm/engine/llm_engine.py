@@ -40,11 +40,12 @@ class LLMEngine:
         for p in self.ps:
             p.join()
 
-    def add_request(self, prompt: str | list[int], sampling_params: SamplingParams):
+    def add_request(self, prompt: str | list[int], sampling_params: SamplingParams) -> int:
         if isinstance(prompt, str):
             prompt = self.tokenizer.encode(prompt)
         seq = Sequence(prompt, sampling_params)
         self.scheduler.add(seq)
+        return seq.seq_id
 
     def step(self):
         seqs, is_prefill = self.scheduler.schedule()
